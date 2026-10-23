@@ -1,3 +1,4 @@
+
 ROWS, COLS = 6, 7
 
 
@@ -6,32 +7,41 @@ class Board:
         self.grid = [["."] * COLS for _ in range(ROWS)]
 
     def drop(self, col, token):
-        if not 0 <= col < COLS:
+        if not isinstance(col, int) or not 0 <= col < COLS:
             return None
+
         for r in range(ROWS - 1, -1, -1):
             if self.grid[r][col] == ".":
                 self.grid[r][col] = token
                 return r
+
         return None
 
     def full(self):
         return all(self.grid[0][c] != "." for c in range(COLS))
 
     def winner(self, token):
+        directions = [
+            (0, 1),   # Horizontal
+            (1, 0),   # Vertical
+            (1, 1),   # Diagonal down-right
+            (1, -1),  # Diagonal down-left
+        ]
 
-        directions = [(0, 1), (1, 0)]
         for r in range(ROWS):
             for c in range(COLS):
                 if self.grid[r][c] != token:
                     continue
+
                 for dr, dc in directions:
                     if all(
-                        0 <= r + i * dr < ROWS and
-                        0 <= c + i * dc < COLS and
-                        self.grid[r + i * dr][c + i * dc] == token
+                        0 <= r + i * dr < ROWS
+                        and 0 <= c + i * dc < COLS
+                        and self.grid[r + i * dr][c + i * dc] == token
                         for i in range(4)
                     ):
                         return True
+
         return False
 
     def print(self):
